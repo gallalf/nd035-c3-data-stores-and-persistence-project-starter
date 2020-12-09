@@ -7,12 +7,14 @@ import com.udacity.jdnd.course3.critter.user.model.Customer;
 import com.udacity.jdnd.course3.critter.user.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CustomerService {
 
     @Autowired
@@ -44,7 +46,7 @@ public class CustomerService {
                 }
             });
         }
-        customer.setPetIds(pets);
+        customer.setPets(pets);
     }
 
     public void savePetList(Long customerId, List<Long> petList){
@@ -74,7 +76,7 @@ public class CustomerService {
 
         Optional<Pet> item = petRepository.findById(petId);
         if(item.isPresent()){
-            return item.get().getOwnerId();
+            return item.get().getOwner();
         }
         else{
             throw new PetNotFoundException("Pet not found");

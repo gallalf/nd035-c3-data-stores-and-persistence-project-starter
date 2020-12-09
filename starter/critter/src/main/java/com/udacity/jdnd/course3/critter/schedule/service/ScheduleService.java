@@ -14,12 +14,14 @@ import com.udacity.jdnd.course3.critter.user.service.CustomerNotFoundException;
 import com.udacity.jdnd.course3.critter.user.service.EmployeeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     @Autowired
@@ -47,7 +49,7 @@ public class ScheduleService {
                     throw new EmployeeNotFoundException("Employee not found");
                 }
             });
-            schedule.setEmployeeIds(employeeIdList);
+            schedule.setEmployees(employeeIdList);
         }
         if(petIds != null){
             Set<Pet> petIdList = Sets.newHashSet();
@@ -60,7 +62,7 @@ public class ScheduleService {
                     throw new PetNotFoundException("Pet not found");
                 }
             });
-            schedule.setPetIds(petIdList);
+            schedule.setPets(petIdList);
         }
 
         scheduleRepository.save(schedule);
@@ -74,7 +76,7 @@ public class ScheduleService {
 
         Optional<Pet> petItem = petRepository.findById(petId);
         if(petItem.isPresent()){
-            return scheduleRepository.findByPetIds(petItem.get());
+            return scheduleRepository.findByPets(petItem.get());
         }
         else{
             throw new PetNotFoundException("Pet not found");
@@ -85,7 +87,7 @@ public class ScheduleService {
 
         Optional<Employee> employeeItem = employeeRepository.findById(employeeId);
         if(employeeItem.isPresent()) {
-            return scheduleRepository.findAllByEmployeeIdsContains(employeeItem.get());
+            return scheduleRepository.findAllByEmployeesContains(employeeItem.get());
         }
         else{
             throw new EmployeeNotFoundException("Employee not found");
@@ -96,8 +98,8 @@ public class ScheduleService {
 
         Optional<Customer> customerItem = customerRepository.findById(customerId);
         if(customerItem.isPresent()) {
-            List<Pet> petList = petRepository.findByOwnerId(customerItem.get());
-            return scheduleRepository.findAllByPetIdsIn(Sets.newHashSet(petList));
+            List<Pet> petList = petRepository.findByOwner(customerItem.get());
+            return scheduleRepository.findAllByPetsIn(Sets.newHashSet(petList));
         }
         else{
             throw new CustomerNotFoundException("Customer not found");

@@ -8,12 +8,14 @@ import com.udacity.jdnd.course3.critter.user.service.CustomerNotFoundException;
 import com.udacity.jdnd.course3.critter.user.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PetService {
 
     @Autowired
@@ -29,7 +31,7 @@ public class PetService {
 
         Optional<Customer> customerItem = customerRepository.findById(ownerId);
         if(customerItem.isPresent()){
-            pet.setOwnerId(customerItem.get());
+            pet.setOwner(customerItem.get());
         }
         else{
             throw new CustomerNotFoundException("Customer not found");
@@ -61,7 +63,7 @@ public class PetService {
 
         Optional<Customer> customerItem = customerRepository.findById(ownerId);
         if(customerItem.isPresent()){
-            return petRepository.findByOwnerId(customerItem.get());
+            return petRepository.findByOwner(customerItem.get());
         }
         else{
             throw new CustomerNotFoundException("Customer not found");

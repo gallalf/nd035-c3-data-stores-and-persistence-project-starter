@@ -3,8 +3,12 @@ package com.udacity.jdnd.course3.critter.user.model;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * I changed the strategy, because I think for this kind of application,
+ * it gives a better performance
+ */
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
 
     @Id

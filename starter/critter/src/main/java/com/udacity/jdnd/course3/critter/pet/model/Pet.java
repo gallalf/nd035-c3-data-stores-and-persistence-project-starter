@@ -21,7 +21,7 @@ public class Pet {
 
     @JoinColumn(referencedColumnName = "id")
     @ManyToOne
-    private Customer ownerId;
+    private Customer owner;
 
     private LocalDate birthDate;
 
@@ -30,10 +30,10 @@ public class Pet {
     public Pet() {
     }
 
-    public Pet(PetType type, String name, Customer ownerId, LocalDate birthDate, String notes) {
+    public Pet(PetType type, String name, Customer owner, LocalDate birthDate, String notes) {
         this.type = type;
         this.name = name;
-        this.ownerId = ownerId;
+        this.owner = owner;
         this.birthDate = birthDate;
         this.notes = notes;
     }
@@ -62,12 +62,12 @@ public class Pet {
         this.name = name;
     }
 
-    public Customer getOwnerId() {
-        return ownerId;
+    public Customer getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(Customer ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Customer owner) {
+        this.owner = owner;
     }
 
     public LocalDate getBirthDate() {

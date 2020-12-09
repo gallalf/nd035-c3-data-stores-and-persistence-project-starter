@@ -2,29 +2,26 @@ package com.udacity.jdnd.course3.critter.user.model;
 
 import com.udacity.jdnd.course3.critter.pet.model.Pet;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Customer extends Person {
+public class Customer extends Person  {
 
     private String phoneNumber;
     private String notes;
 
     @JoinColumn(referencedColumnName = "id")
     @ManyToMany
-    private List<Pet> petIds;
+    private List<Pet> pets;
 
     public Customer() {
     }
 
-    public Customer(String name, String phoneNumber, String notes, List<Pet> petIds) {
-        this.name = name;
+    public Customer(String phoneNumber, String notes, List<Pet> pets) {
         this.phoneNumber = phoneNumber;
         this.notes = notes;
-        this.petIds = petIds;
+        this.pets = pets;
     }
 
     public String getPhoneNumber() {
@@ -43,11 +40,11 @@ public class Customer extends Person {
         this.notes = notes;
     }
 
-    public List<Pet> getPetIds() {
-        return petIds;
+    public List<Pet> getPets() {
+        return pets;
     }
 
-    public void setPetIds(List<Pet> petIds) {
-        this.petIds = petIds;
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
     }
 }

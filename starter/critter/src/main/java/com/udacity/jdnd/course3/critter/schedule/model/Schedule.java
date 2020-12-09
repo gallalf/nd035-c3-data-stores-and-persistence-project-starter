@@ -18,11 +18,11 @@ public class Schedule {
 
     @JoinColumn(referencedColumnName = "id")
     @ManyToMany
-    private Set<Employee> employeeIds;
+    private Set<Employee> employees;
 
     @JoinColumn(referencedColumnName = "id")
     @ManyToMany
-    private Set<Pet> petIds;
+    private Set<Pet> pets;
 
     private LocalDate date;
 
@@ -33,9 +33,9 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(Set<Employee> employeeIds, Set<Pet> petIds, LocalDate date, Set<EmployeeSkill> activities) {
-        this.employeeIds = employeeIds;
-        this.petIds = petIds;
+    public Schedule(Set<Employee> employees, Set<Pet> pets, LocalDate date, Set<EmployeeSkill> activities) {
+        this.employees = employees;
+        this.pets = pets;
         this.date = date;
         this.activities = activities;
     }
@@ -48,20 +48,20 @@ public class Schedule {
         this.id = id;
     }
 
-    public Set<Employee> getEmployeeIds() {
-        return employeeIds;
+    public Set<Employee> getEmployees() {
+        return employees;
     }
 
-    public void setEmployeeIds(Set<Employee> employeeIds) {
-        this.employeeIds = employeeIds;
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
     }
 
-    public Set<Pet> getPetIds() {
-        return petIds;
+    public Set<Pet> getPets() {
+        return pets;
     }
 
-    public void setPetIds(Set<Pet> petIds) {
-        this.petIds = petIds;
+    public void setPets(Set<Pet> pets) {
+        this.pets = pets;
     }
 
     public LocalDate getDate() {
