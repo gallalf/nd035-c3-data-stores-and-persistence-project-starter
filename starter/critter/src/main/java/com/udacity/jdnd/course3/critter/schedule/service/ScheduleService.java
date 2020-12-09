@@ -1,37 +1,29 @@
 package com.udacity.jdnd.course3.critter.schedule.service;
 
-import com.udacity.jdnd.course3.critter.Utils;
+import com.google.common.collect.Sets;
 import com.udacity.jdnd.course3.critter.pet.model.Pet;
 import com.udacity.jdnd.course3.critter.pet.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.pet.service.PetNotFoundException;
-import com.udacity.jdnd.course3.critter.schedule.ScheduleDTO;
 import com.udacity.jdnd.course3.critter.schedule.model.Schedule;
 import com.udacity.jdnd.course3.critter.schedule.repository.ScheduleRepository;
+import com.udacity.jdnd.course3.critter.user.model.Customer;
 import com.udacity.jdnd.course3.critter.user.model.Employee;
-import com.udacity.jdnd.course3.critter.user.model.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.user.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.user.repository.EmployeeRepository;
-import com.udacity.jdnd.course3.critter.user.repository.EmployeeSkillRepository;
+import com.udacity.jdnd.course3.critter.user.service.CustomerNotFoundException;
 import com.udacity.jdnd.course3.critter.user.service.EmployeeNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ScheduleService {
 
     @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
     private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private EmployeeSkillRepository employeeSkillRepository;
 
     @Autowired
     private PetRepository petRepository;
@@ -39,14 +31,14 @@ public class ScheduleService {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
-    public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO){
+    @Autowired
+    private CustomerRepository customerRepository;
 
-        Schedule schedule = new Schedule();
-        ScheduleDTO newScheduleDTO = new ScheduleDTO();
+    public void createSchedule(Schedule schedule, List<Long> employeeIds, List<Long> petIds){
 
-        if(scheduleDTO.getEmployeeIds() != null) {
-            List<Employee> employeeIdList = new ArrayList<>();
-            scheduleDTO.getEmployeeIds().forEach(employeeId ->{
+        if(employeeIds != null) {
+            Set<Employee> employeeIdList = Sets.newHashSet();
+            employeeIds.forEach(employeeId ->{
                 Optional<Employee> employeeItem = employeeRepository.findById(employeeId);
                 if(employeeItem.isPresent()){
                     employeeIdList.add(employeeItem.get());
@@ -57,9 +49,9 @@ public class ScheduleService {
             });
             schedule.setEmployeeIds(employeeIdList);
         }
-        if(scheduleDTO.getPetIds() != null){
-            List<Pet> petIdList = new ArrayList<>();
-            scheduleDTO.getPetIds().forEach(petId ->{
+        if(petIds != null){
+            Set<Pet> petIdList = Sets.newHashSet();
+            petIds.forEach(petId ->{
                 Optional<Pet> petItem = petRepository.findById(petId);
                 if(petItem.isPresent()){
                     petIdList.add(petItem.get());
@@ -71,70 +63,44 @@ public class ScheduleService {
             schedule.setPetIds(petIdList);
         }
 
-        schedule.setDate(scheduleDTO.getDate());
-
-        List<String> skillNameList = Utils.getEmployeeSkillList(scheduleDTO.getActivities());
-        List<EmployeeSkill> employeeSkillList = employeeSkillRepository.findSkillsByName(skillNameList);
-
-        schedule.setActivities(employeeSkillList);
-        schedule = scheduleRepository.save(schedule);
-
-        BeanUtils.copyProperties(scheduleDTO, newScheduleDTO);
-        return newScheduleDTO;
+        scheduleRepository.save(schedule);
     }
 
-    public List<ScheduleDTO> getAllSchedules(){
-
-        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
-        List<Schedule> scheduleList = scheduleRepository.findAll();
-        scheduleList.forEach(schedule -> {
-            ScheduleDTO scheduleDTO = Utils.createScheduleDTO(schedule);
-            scheduleDTOList.add(scheduleDTO);
-        });
-
-        return scheduleDTOList;
+    public List<Schedule> getAllSchedules(){
+       return scheduleRepository.findAll();
     }
 
-    public List<ScheduleDTO> getScheduleForPet(long petId){
-        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+    public List<Schedule> getScheduleForPet(long petId){
 
         Optional<Pet> petItem = petRepository.findById(petId);
         if(petItem.isPresent()){
-            Pet pet = petItem.get();
-            List<Schedule> scheduleList = scheduleRepository.findByPetIds(pet);
-            scheduleList.forEach(schedule -> {
-                ScheduleDTO scheduleDTO = Utils.createScheduleDTO(schedule);
-                scheduleDTOList.add(scheduleDTO);
-            });
+            return scheduleRepository.findByPetIds(petItem.get());
         }
         else{
             throw new PetNotFoundException("Pet not found");
         }
-
-        return scheduleDTOList;
     }
 
-    public List<ScheduleDTO> getScheduleForEmployee(long employeeId){
-        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+    public List<Schedule> getScheduleForEmployee(long employeeId){
 
         Optional<Employee> employeeItem = employeeRepository.findById(employeeId);
-        if(employeeItem.isPresent()){
-
+        if(employeeItem.isPresent()) {
+            return scheduleRepository.findAllByEmployeeIdsContains(employeeItem.get());
         }
         else{
             throw new EmployeeNotFoundException("Employee not found");
         }
-
-        return scheduleDTOList;
     }
 
-    public List<ScheduleDTO> getScheduleForCustomer(long customerId) {
-        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+    public List<Schedule> getScheduleForCustomer(long customerId) {
 
-        List<Pet> petList = petRepository.findPetByOwnerId(customerId);
-
-
-
-        return scheduleDTOList;
+        Optional<Customer> customerItem = customerRepository.findById(customerId);
+        if(customerItem.isPresent()) {
+            List<Pet> petList = petRepository.findByOwnerId(customerItem.get());
+            return scheduleRepository.findAllByPetIdsIn(Sets.newHashSet(petList));
+        }
+        else{
+            throw new CustomerNotFoundException("Customer not found");
+        }
     }
 }

@@ -4,7 +4,7 @@ import com.udacity.jdnd.course3.critter.pet.model.Pet;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import java.util.List;
 
 @Entity
@@ -14,7 +14,7 @@ public class Customer extends Person {
     private String notes;
 
     @JoinColumn(referencedColumnName = "id")
-    @OneToMany
+    @ManyToMany
     private List<Pet> petIds;
 
     public Customer() {

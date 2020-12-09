@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.pet.model;
 
+import com.udacity.jdnd.course3.critter.pet.PetType;
 import com.udacity.jdnd.course3.critter.user.model.Customer;
 
 import javax.persistence.*;
@@ -13,8 +14,7 @@ public class Pet {
     @GeneratedValue
     private Long id;
 
-    @JoinColumn(referencedColumnName = "id")
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private PetType type;
 
     private String name;

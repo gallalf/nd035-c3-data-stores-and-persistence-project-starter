@@ -2,11 +2,10 @@ package com.udacity.jdnd.course3.critter.schedule.model;
 
 import com.udacity.jdnd.course3.critter.pet.model.Pet;
 import com.udacity.jdnd.course3.critter.user.model.Employee;
-import com.udacity.jdnd.course3.critter.user.model.EmployeeSkill;
+import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,22 +17,23 @@ public class Schedule {
     private Long id;
 
     @JoinColumn(referencedColumnName = "id")
-    @OneToMany
-    private List<Employee> employeeIds;
+    @ManyToMany
+    private Set<Employee> employeeIds;
 
     @JoinColumn(referencedColumnName = "id")
-    @OneToMany
-    private List<Pet> petIds;
+    @ManyToMany
+    private Set<Pet> petIds;
 
     private LocalDate date;
-    @JoinColumn(referencedColumnName = "id")
-    @OneToMany
-    private List<EmployeeSkill> activities;
+
+    @ElementCollection(targetClass = EmployeeSkill.class)
+    @Enumerated(EnumType.STRING)
+    private Set<EmployeeSkill> activities;
 
     public Schedule() {
     }
 
-    public Schedule(List<Employee> employeeIds, List<Pet> petIds, LocalDate date, List<EmployeeSkill> activities) {
+    public Schedule(Set<Employee> employeeIds, Set<Pet> petIds, LocalDate date, Set<EmployeeSkill> activities) {
         this.employeeIds = employeeIds;
         this.petIds = petIds;
         this.date = date;
@@ -48,19 +48,19 @@ public class Schedule {
         this.id = id;
     }
 
-    public List<Employee> getEmployeeIds() {
+    public Set<Employee> getEmployeeIds() {
         return employeeIds;
     }
 
-    public void setEmployeeIds(List<Employee> employeeIds) {
+    public void setEmployeeIds(Set<Employee> employeeIds) {
         this.employeeIds = employeeIds;
     }
 
-    public List<Pet> getPetIds() {
+    public Set<Pet> getPetIds() {
         return petIds;
     }
 
-    public void setPetIds(List<Pet> petIds) {
+    public void setPetIds(Set<Pet> petIds) {
         this.petIds = petIds;
     }
 
@@ -72,11 +72,11 @@ public class Schedule {
         this.date = date;
     }
 
-    public List<EmployeeSkill> getActivities() {
+    public Set<EmployeeSkill> getActivities() {
         return activities;
     }
 
-    public void setActivities(List<EmployeeSkill> activities) {
+    public void setActivities(Set<EmployeeSkill> activities) {
         this.activities = activities;
     }
 
